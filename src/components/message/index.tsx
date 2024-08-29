@@ -54,7 +54,7 @@ function MessageBody({ message }: { message: MessageProps }) {
   return (
     <div
       className={cn([
-        'p-3 text-background rounded-xl max-w-max font-medium',
+        'p-3 text-background rounded-xl max-w-sm font-medium',
         message.kind === 'sent' && 'bg-background text-primary self-end',
         message.kind === 'received' && 'bg-primary text-background',
       ])}

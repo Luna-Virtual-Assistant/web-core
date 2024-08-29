@@ -9,7 +9,7 @@ import {
 } from '@/components/sidebar'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { FaRegCalendarAlt } from 'react-icons/fa'
-import { LuLayoutDashboard, LuMoonStar } from 'react-icons/lu'
+import { LuMoonStar } from 'react-icons/lu'
 import { PiChatBold } from 'react-icons/pi'
 
 export function MainSidebar() {
@@ -21,11 +21,6 @@ export function MainSidebar() {
       </SidebarHeader>
 
       <SidebarNav>
-        <SidebarNavLink href="/dashboard">
-          <LuLayoutDashboard className="w-4 h-4" />
-          <p>Dashboard</p>
-        </SidebarNavLink>
-
         <SidebarNavLink href="/chat">
           <PiChatBold className="w-4 h-4" />
           <p>Chat</p>
