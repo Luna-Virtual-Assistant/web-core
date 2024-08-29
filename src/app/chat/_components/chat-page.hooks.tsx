@@ -1,6 +1,8 @@
+'use client'
+
 import { MessageProps } from '@/components/message'
 import mqtt, { MqttClient } from 'mqtt'
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export function useChatPage() {
@@ -9,47 +11,47 @@ export function useChatPage() {
   const [messages, setMessages] = useState<MessageProps[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const mqttConnect = useCallback((host: string) => {
-    const newClient = mqtt.connect(host, {
-      keepalive: 60,
-      clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
-      protocolId: 'MQTT',
-      protocolVersion: 4,
-      clean: true,
-      reconnectPeriod: 1000,
-      connectTimeout: 30 * 1000,
-      port: 8883,
-    })
-    setClient(newClient)
-    return newClient
-  }, [])
-
   useEffect(() => {
-    const newClient = mqttConnect('ws://localhost:8883')
+    const mqttConnect = () => {
+      const newClient = mqtt.connect({
+        keepalive: 60,
+        clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
+        port: 8884,
+        hostname: 'localhost',
+      })
+      setClient(newClient)
+      return newClient
+    }
+
+    const newClient = mqttConnect()
 
     newClient.on('connect', () => {
-      newClient.subscribe('/luna/response')
-      setClient(newClient)
-    })
+      console.log('Connected to MQTT')
 
-    newClient.on('message', (topic, message) => {
-      const payload: MessageProps = {
-        body: message.toString(),
-        kind: 'received',
-        timestamp: Date.now(),
-      }
-      setMessages((prev) => [...prev, payload])
+      newClient.subscribe('/history/message', (err) => {
+        console.log('Subscribed to /history')
+
+        if (err) {
+          console.error(err)
+        }
+      })
+
+      newClient.on('message', (topic, message) => {
+        console.log('Received message:', message.toString(), topic)
+        const payload: MessageProps = {
+          body: message.toString(),
+          kind: 'received',
+          timestamp: Date.now(),
+        }
+        setMessages((prev) => [...prev, payload])
+      })
     })
 
     return () => {
-      newClient.off('connect', () => {
-        newClient.subscribe('/luna/response')
-      })
-
-      newClient.off('message', () => {})
+      newClient.off('connect', () => {})
       newClient.end()
     }
-  }, [mqttConnect])
+  }, [])
 
   const handleSendMessage = useCallback(
     (message: string) => {

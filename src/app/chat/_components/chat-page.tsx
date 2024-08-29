@@ -2,17 +2,17 @@
 
 import { Message } from '@/components/message'
 import {
+  Page,
+  PageFooter,
   PageHeader,
   PageHeaderTitle,
   PageMain,
-  PageFooter,
-  Page,
 } from '@/components/page'
-import { useChatPage } from '../chat-page.hooks'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { FaArrowUp } from 'react-icons/fa'
+import { useChatPage } from './chat-page.hooks'
 
 export function ChatPage() {
   const { messages, messagesEndRef, form, onSubmit } = useChatPage()
@@ -23,7 +23,7 @@ export function ChatPage() {
         <PageHeaderTitle>Converse com Luna</PageHeaderTitle>
       </PageHeader>
 
-      <PageMain className="max-w-[35vw] relative w-full mx-auto flex flex-col h-full overflow-y-auto p-0 py-4">
+      <PageMain className="max-w-3xl relative w-full mx-auto flex flex-col h-full overflow-y-auto p-0 py-4">
         <section className="flex flex-col gap-6 pb-20">
           {messages.map((message) => (
             <Message key={message.timestamp} message={message} />
@@ -31,7 +31,7 @@ export function ChatPage() {
           <div ref={messagesEndRef} />
         </section>
 
-        <PageFooter className="fixed bottom-0 w-full bg-muted flex flex-col justify-center border-border max-w-[35vw] pb-2">
+        <PageFooter className="fixed bottom-0 w-full bg-muted flex flex-col justify-center border-border max-w-3xl pb-2">
           <Form {...form}>
             <form onSubmit={onSubmit} className="flex items-center gap-1">
               <Input
