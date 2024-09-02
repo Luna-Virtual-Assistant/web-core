@@ -8,7 +8,7 @@ import {
   SidebarNavLink,
 } from '@/components/sidebar'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { FaRegCalendarAlt } from 'react-icons/fa'
+import { FaRegCalendarAlt, FaWhatsapp } from 'react-icons/fa'
 import { LuMoonStar } from 'react-icons/lu'
 import { PiChatBold } from 'react-icons/pi'
 
@@ -29,6 +29,11 @@ export function MainSidebar() {
         <SidebarNavLink href="/agendamentos">
           <FaRegCalendarAlt className="w-4 h-4" />
           <p>Agendamentos</p>
+        </SidebarNavLink>
+
+        <SidebarNavLink href="/whatsapp">
+          <FaWhatsapp className="w-4 h-4" />
+          <p>Whatsapp</p>
         </SidebarNavLink>
       </SidebarNav>
 
