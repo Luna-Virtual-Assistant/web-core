@@ -3,13 +3,28 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { FormEvent, useEffect, useState } from 'react'
+import { Progress } from '@/components/ui/progress'
+import { FormEvent, useCallback, useState } from 'react'
 import QRCode from 'react-qr-code'
 
 export default function Whatsapp() {
   const [QRcode, setQRcode] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(50) // Tempo inicial de 50 segundos
+  const [timeLeft, setTimeLeft] = useState(50)
+
+  const startTimer = useCallback(() => {
+    setTimeLeft(50)
+    const timerInterval = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timerInterval)
+          setIsDialogOpen(false)
+          return 0
+        }
+        return prevTime - 1
+      })
+    }, 1000)
+  }, [])
 
   async function handleCreateSession(event: FormEvent) {
     event.preventDefault()
@@ -17,11 +32,10 @@ export default function Whatsapp() {
     const formData = new FormData(event.target as HTMLFormElement)
 
     const sessionName = formData.get('sessionName') as string
-
     const token = process.env.NEXT_PUBLIC_TOKEN
 
     try {
-      fetch(
+      const response = await fetch(
         `http://localhost:7000/new-session?token=${token}&sessionName=${sessionName}`,
         {
           method: 'GET',
@@ -30,30 +44,16 @@ export default function Whatsapp() {
           },
         },
       )
-        .then((response) => response.json())
-        .then((data) => {
-          setQRcode(data.qrCode)
-          setIsDialogOpen(true)
-          setTimeLeft(50)
 
-          setTimeout(() => {
-            setIsDialogOpen(false)
-          }, 50 * 1000)
-        })
+      const data = await response.json()
+
+      setQRcode(data.qrCode)
+      setIsDialogOpen(true)
+      startTimer()
     } catch {
       alert('Erro ao criar sessão')
     }
   }
-
-  useEffect(() => {
-    if (isDialogOpen && timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1)
-      }, 1000)
-
-      return () => clearInterval(timer)
-    }
-  }, [isDialogOpen, timeLeft])
 
   return (
     <div className="flex items-center justify-center flex-col">
@@ -61,28 +61,29 @@ export default function Whatsapp() {
         <DialogContent className="flex justify-center items-center flex-col">
           {QRcode && (
             <>
-              <p>Fechará em: {timeLeft} segundos</p>
               <QRCode
-                size={20}
+                size={128}
                 style={{ height: 'auto', maxWidth: '100%', width: '70%' }}
                 value={QRcode}
               />
+              <p className="mt-1 text-sm font-medium">
+                Fechará em: {timeLeft} segundos
+              </p>
+              <Progress value={timeLeft * 2} />
             </>
           )}
         </DialogContent>
       </Dialog>
 
-      <div>
-        <h1 className="text-1xl text-left font-semibold">
-          Insira um nome de sessão
-        </h1>
+      <div className="mt-6">
+        <h1 className="text-1xl font-semibold">Insira um nome de sessão</h1>
         <form
           onSubmit={handleCreateSession}
-          className="flex items-center gap-2 justify-center"
+          className="flex items-center gap-2 justify-center mt-4"
         >
           <Input
             name="sessionName"
-            placeholder="Digite o número de telefone"
+            placeholder="Digite o nome da sessão"
             required
           />
           <Button type="submit">Enviar</Button>
