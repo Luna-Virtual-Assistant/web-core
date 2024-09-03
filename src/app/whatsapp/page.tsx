@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Progress } from '@/components/ui/progress'
 import { FormEvent, useCallback, useState } from 'react'
 import QRCode from 'react-qr-code'
 
@@ -65,9 +66,10 @@ export default function Whatsapp() {
                 style={{ height: 'auto', maxWidth: '100%', width: '70%' }}
                 value={QRcode}
               />
-              <p className="mt-4 text-sm font-medium">
+              <p className="mt-1 text-sm font-medium">
                 Fechará em: {timeLeft} segundos
               </p>
+              <Progress value={timeLeft * 2} />
             </>
           )}
         </DialogContent>

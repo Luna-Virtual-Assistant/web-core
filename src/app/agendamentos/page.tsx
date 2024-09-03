@@ -109,6 +109,7 @@ export default function Scheduless() {
     const body = {
       text,
       schedule_date: formattedDate,
+      sessionName: '558496783580',
     }
 
     try {
