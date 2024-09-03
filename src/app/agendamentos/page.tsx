@@ -61,7 +61,7 @@ export default function Scheduless() {
       })
 
       if (response.ok) {
-        mutate(apiUrl)
+        mutate(`${apiUrl}?token=${token}`)
         setText('')
         setScheduleDate('')
       } else {
@@ -181,7 +181,7 @@ export default function Scheduless() {
 
               return (
                 <tr key={schedule.id} className="text-center">
-                  <td className="py-2 px-4 border-b break-words">
+                  <td className="py-2 px-4 border-b break-words max-w-sm">
                     <div className="truncate">{schedule.text}</div>
                   </td>
                   <td className="py-2 px-4 border-b">
